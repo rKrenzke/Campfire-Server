@@ -3,6 +3,7 @@ let express = require("express");
 let router = express.Router();
 let sequelize = require("../db");
 let User = require("../models/user")(sequelize, require("sequelize"));
+let validateSession = require('../middleware/validate-session');
 let bcrypt = require("bcrypt");
 let jwt = require("jsonwebtoken");
 
@@ -39,7 +40,8 @@ router.post("/register", function (request, response) {
       User.create({
         username: username,
         password: bcrypt.hashSync(password, 10),
-        email: email
+        email: email,
+        isAdmin: false
       }).then((user) => {
         // generate a session token using the newly created user object
         let token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 60*60*24});
@@ -91,5 +93,69 @@ router.post("/login", function (request, response) {
     }
   );
 });
+
+//*ADMIN routes
+//Get all users
+router.get("/admin", validateSession, function (request, response) {
+  User.findOne({ where: { username: request.body.user.username } }).then(
+    function (user) {
+      if (user.isAdmin == true) {
+        User
+        .findAll()
+        .then(
+          function findAllSuccess(data){
+          response.json(data);
+        },
+        function findAllError(err){
+          response.send(500, err.message);
+        }
+      );
+      } else {
+            response.status(400).send({ error: "Users not found or invalid credentials" });
+          }
+      },
+    function (err) {
+      response.status(501).send({ error: "Not Implemented" });
+    }
+  );
+});
+
+//Modify User Admin status
+router.put('/admin', validateSession, function(request, response){
+  let username = request.body.user.username;
+  User
+  .update({
+      isAdmin: true
+  },
+  {where: {username: username}}
+  ).then(
+      function updateSuccess(updatedStatus){
+          response.send(`User status updated to Admin`);
+      },
+      function updateError(err){
+          response.send(500, err.message);
+      }
+  )
+});
+
+//Delete a User
+router.delete('/admin', validateSession, function(request, response){
+  let data = request.body.user.username
+
+  User
+  .destroy({
+      where: {username: data}
+  })
+  .then(
+      function deleteUserSuccess(data){
+          response.send("User Deleted");
+      },
+      function deleteUserError(err){
+          response.send(500, err.message);
+      }
+  );
+});
+
+
 
 module.exports = router;
