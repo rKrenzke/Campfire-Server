@@ -15,6 +15,7 @@ router.post('/new', validateSession, function(request, response){
     let totalSites = request.body.trip.totalSites;
     let contactEmail = request.body.trip.contactEmail;
     let contactPhone = request.body.trip.contactPhone;
+    let siteAddress = request.body.trip.siteAddress;
     let operatingHours = request.body.trip.operatingHours;
     let reservationUrl = request.body.trip.reservationUrl;
     let nights = request.body.trip.nights;
@@ -30,6 +31,7 @@ router.post('/new', validateSession, function(request, response){
         totalSites,
         contactEmail,
         contactPhone,
+        siteAddress,
         operatingHours,
         reservationUrl,
         nights,
@@ -38,10 +40,10 @@ router.post('/new', validateSession, function(request, response){
     })
     .then(
         function createSuccess(data){
-            response.json(data);
+            response.send(data);
         },
         function createError(err){
-            response.send(500, err.message);
+            response.send(err.message);
         }
     );
 });

@@ -30,7 +30,7 @@ Trip.belongsTo(User);
 // Trip.hasMany(User);
 // Trip.belongsToMany(User);
 
-Trip.hasOne(PackList);
+Trip.hasMany(PackList);
 PackList.belongsTo(Trip);
 
 app.use(express.json());

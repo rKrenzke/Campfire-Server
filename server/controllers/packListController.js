@@ -7,11 +7,13 @@ let validateSession = require('../middleware/validate-session');
 //Create - create pack list for trip
 router.post('/newPackList', validateSession, (request, response) => {
     let tripId = request.body.packList.tripId
-    let listofItems = request.body.packList.listofItems;
+    let packItem = request.body.packList.packItem;
+    let who = request.body.user.userName
     PackList
     .create({
         tripId,
-        listofItems
+        packItem,
+        who
     })
     .then(
         function createSuccess(data){
@@ -23,8 +25,8 @@ router.post('/newPackList', validateSession, (request, response) => {
     );
 })
 //Read - get pack list for a trip
-router.get('/getList', validateSession, (request, response) => {
-    let tripId = request.body.packList.tripId
+router.get('/getList/:id', validateSession, (request, response) => {
+    let tripId = request.params.id
 
     PackList
     .findAll({where: {tripId: tripId}})
@@ -40,11 +42,11 @@ router.get('/getList', validateSession, (request, response) => {
 //Update - modify existing pack list
 router.put('/:id', function(request, response){
     let data = request.params.id;
-    let additions = request.body.packList.newItem;
+    let packItem = request.body.packList.newItem;
 
     PackList
     .update({
-        listOfItems: additions
+        packItem
     },
     {where: {id: data}}
     ).then(
@@ -65,7 +67,7 @@ router.delete('/:id', validateSession, function(request, response){
             where: {id: data}
         }).then(
             function deleteListSuccess(data){
-                response.send("Packlist Deleted");
+                response.send("Item Deleted");
             },
             function deleteListError(err){
                 response.send(500, err.message);

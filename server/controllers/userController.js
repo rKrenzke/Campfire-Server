@@ -78,6 +78,7 @@ router.post("/login", function (request, response) {
             response.json({
               user,
               message: "Authentication Successful",
+              isAdmin: user.isAdmin,
               sessionToken: token,
             });
           } else {
@@ -94,10 +95,10 @@ router.post("/login", function (request, response) {
   );
 });
 
-//*ADMIN routes
+//*ADMIN routes - PROTECTED
 //Get all users
 router.get("/admin", validateSession, function (request, response) {
-  User.findOne({ where: { username: request.body.user.username } }).then(
+  User.findOne({ where: { username: request.user.username } }).then(
     function (user) {
       if (user.isAdmin == true) {
         User
@@ -121,34 +122,34 @@ router.get("/admin", validateSession, function (request, response) {
 });
 
 //Modify User Admin status
-router.put('/admin', validateSession, function(request, response){
-  let username = request.body.user.username;
+router.put('/admin/:id', validateSession, function(request, response){
+  let data = request.params.id
   User
   .update({
       isAdmin: true
   },
-  {where: {username: username}}
+  {where: {id: data}}
   ).then(
       function updateSuccess(updatedStatus){
-          response.send(`User status updated to Admin`);
+          response.status(200).send(`User status updated to Admin`);
       },
       function updateError(err){
-          response.send(500, err.message);
+          response.status(500).send(err.body);
       }
   )
 });
 
 //Delete a User
-router.delete('/admin', validateSession, function(request, response){
-  let data = request.body.user.username
+router.delete('/admin/:id', validateSession, function(request, response){
+  let data = request.params.id
 
   User
   .destroy({
-      where: {username: data}
+      where: {id: data}
   })
   .then(
       function deleteUserSuccess(data){
-          response.send("User Deleted");
+          response.send(data, "User Deleted");
       },
       function deleteUserError(err){
           response.send(500, err.message);
