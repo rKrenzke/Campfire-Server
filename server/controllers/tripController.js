@@ -36,7 +36,13 @@ router.post('/new', validateSession, function(request, response){
         reservationUrl,
         nights,
         costPerNight,
-        siteImage
+        siteImage,
+        campsiteReserved: false,
+        recreationPassport: false,
+        fireRestrictions: false,
+        rusticSite: false,
+        startDate: null,
+        endDate: null
     })
     .then(
         function createSuccess(data){
@@ -67,14 +73,26 @@ router.get('/all', validateSession, function(request, response){
     );
 });
 //Update
-//PUT new rating for existing trip
+//PUT 
 router.put('/:id', function(request, response){
     let data = request.params.id;
     let nights = request.body.trip.nights;
+    let campsiteReserved = request.body.trip.campsiteReserved;
+    let recreationPassport = request.body.trip.campsiteReserved;
+    let fireRestrictions = request.body.trip.fireRestrictions;
+    let rusticSite = request.body.trip.rusticSite;
+    let startDate = request.body.trip.startDate;
+    let endDate = request.body.trip.endDate
 
     Trip
     .update({
-        nights: nights
+        nights,
+        campsiteReserved,
+        recreationPassport,
+        fireRestrictions,
+        rusticSite,
+        startDate,
+        endDate
     },
     {where: {id: data}}
     ).then(

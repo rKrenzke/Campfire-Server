@@ -51,7 +51,7 @@ router.put('/:id', function(request, response){
     {where: {id: data}}
     ).then(
         function updateSuccess(updatedList){
-            response.send(`Packlist updated!`);
+            response.send(updatedList);
         },
         function updateError(err){
             response.send(500, err.message);

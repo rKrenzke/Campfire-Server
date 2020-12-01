@@ -11,6 +11,13 @@ module.exports = function(sequelize, DataTypes){
         reservationUrl: DataTypes.STRING,
         nights: DataTypes.INTEGER,
         costPerNight: DataTypes.INTEGER,
-        siteImage: DataTypes.STRING
+        siteImage: DataTypes.STRING,
+        campsiteReserved: DataTypes.BOOLEAN,
+        recreationPassport: DataTypes.BOOLEAN,
+        fireRestrictions: DataTypes.BOOLEAN,
+        rusticSite: DataTypes.BOOLEAN,
+        startDate: DataTypes.DATE,
+        endDate: DataTypes.DATE
+
     });
 };
