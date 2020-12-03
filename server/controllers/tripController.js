@@ -61,7 +61,7 @@ router.get('/all', validateSession, function(request, response){
 
     Trip
     .findAll({
-        where: {userId: userid} /*include: 'packList'*/
+        where: {userId: userid}
     })
     .then(
         function findAllSuccess(data){
